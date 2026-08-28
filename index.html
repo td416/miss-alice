@@ -1,0 +1,363 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>wonderland</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- START PAGE -->
+    <section id="startPage" class="page active">
+
+        <div class="content">
+            <p class="small-text">hello stranger...</p>
+
+            <h1>What's your name? real name pls</h1>
+
+            <input
+                type="text"
+                id="nameInput"
+                placeholder="Type your name..."
+                autocomplete="off"
+            >
+
+            <button onclick="startQuiz()">Continue</button>
+        </div>
+
+    </section>
+
+
+    <!-- QUESTIONS -->
+    <section id="questionPage" class="page">
+
+        <div class="content">
+
+            <p id="questionNumber"></p>
+
+            <h1 id="questionText"></h1>
+
+            <textarea
+                id="answerInput"
+                placeholder="Write whatever comes to mind in any language..."
+            ></textarea>
+
+            <button onclick="nextQuestion()">Next</button>
+
+        </div>
+
+    </section>
+
+
+    <!-- RESULT -->
+    <section id="resultPage" class="page">
+
+        <div class="result-container">
+
+            <h1 id="resultName"></h1>
+
+            <p class="result-subtitle">
+                This is who you are.
+            </p>
+
+            <div id="chart" class="chart">
+
+                <div class="chart-name" id="chartName"></div>
+
+                <div class="branches">
+
+                    <div class="answer-card" id="answer1"></div>
+                    <div class="answer-card" id="answer2"></div>
+                    <div class="answer-card" id="answer3"></div>
+                    <div class="answer-card" id="answer4"></div>
+                    <div class="answer-card" id="answer5"></div>
+                    <div class="answer-card" id="answer6"></div>
+
+                </div>
+
+                <div class="chibi">
+                    ♡
+                </div>
+
+            </div>
+
+            <button onclick="showBoxes()">
+                Continue
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- BOXES -->
+    <section id="boxesPage" class="page">
+
+        <div class="content">
+
+            <p class="small-text">One more thing...</p>
+
+            <h1>Pick one.</h1>
+
+            <div class="boxes">
+
+                <button class="box" onclick="openBox(1)">
+                    <span>01</span>
+                </button>
+
+                <button class="box" onclick="openBox(2)">
+                    <span>02</span>
+                </button>
+
+                <button class="box" onclick="openBox(3)">
+                    <span>03</span>
+                </button>
+
+                <button class="box" onclick="openBox(4)">
+                    <span>04</span>
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- MESSAGE -->
+    <section id="messagePage" class="page">
+
+        <div class="content">
+
+            <p class="small-text">You picked...</p>
+
+            <div id="messageBox" class="message-box"></div>
+
+            <button onclick="showFinal()">
+                Continue
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- FINAL -->
+    <section id="finalPage" class="page">
+
+        <div class="content">
+
+            <p class="small-text">One last question...</p>
+
+            <h1>Do you love me?</h1>
+
+            <div class="final-buttons">
+
+                <button
+                    id="yesButton"
+                    class="yes-button"
+                    onclick="yesClicked()"
+                >
+                    YES
+                </button>
+
+                <button
+                    id="noButton"
+                    class="no-button"
+                    onmouseenter="runAway()"
+                    onclick="runAway()"
+                >
+                    NO
+                </button>
+
+            </div>
+
+            <p id="finalMessage"></p>
+
+            <div id="happinessMessage" class="happiness-message">
+
+                <div class="happiness-card">
+
+                    <p>
+                        Happiness can still be found,<br>
+                        even in the darkest moments.
+                    </p>
+
+                    <span>— Inspired by Dumbledore</span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- BACKGROUND MUSIC -->
+    <audio id="backgroundMusic" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+
+    <!-- RAIN -->
+    <div class="rain"></div>
+
+
+    <!-- FIREPLACE -->
+    <div class="fireplace">
+
+        <div class="fire">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <div class="logs">
+            <span></span>
+            <span></span>
+        </div>
+
+    </div>
+
+
+    <!-- CREDITS -->
+    <footer class="credits">
+        ✦ Designed &amp; Created by Alice aka toty ✦
+    </footer>
+
+
+    <!-- FIREBASE -->
+    <script type="module">
+
+        import { initializeApp } from
+        "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+
+        import {
+            getFirestore,
+            collection,
+            addDoc,
+            serverTimestamp
+        } from
+        "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+
+
+        const firebaseConfig = {
+
+            apiKey: "AIzaSyDTuI8qAergDYLB2JYaQI9pmlfpn9sbyig",
+
+            authDomain: "alice-3aaec.firebaseapp.com",
+
+            projectId: "alice-3aaec",
+
+            storageBucket: "alice-3aaec.firebasestorage.app",
+
+            messagingSenderId: "823463978795",
+
+            appId: "1:823463978795:web:896c2f347230d2a025876e",
+
+            measurementId: "G-V8GV84CKE2"
+        };
+
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+
+        const db = getFirestore(app);
+
+
+        // Make saveAnswers available to script.js
+        window.saveAnswers = async function () {
+
+            try {
+
+                await addDoc(
+                    collection(db, "answers"),
+                    {
+
+                        name: window.userName,
+
+                        answer1: window.answers[0],
+                        answer2: window.answers[1],
+                        answer3: window.answers[2],
+                        answer4: window.answers[3],
+                        answer5: window.answers[4],
+                        answer6: window.answers[5],
+
+                        createdAt: serverTimestamp()
+
+                    }
+                );
+
+                console.log("Answers saved successfully!");
+
+            } catch (error) {
+
+                console.error("Firebase error:", error);
+
+            }
+
+        };
+
+
+        // Rain animation
+        const rain =
+            document.querySelector(".rain");
+
+
+        for (let i = 0; i < 35; i++) {
+
+            const drop =
+                document.createElement("span");
+
+
+            drop.className =
+                "raindrop";
+
+
+            drop.style.left =
+                Math.random() * 100 + "%";
+
+
+            const size =
+                0.5 + Math.random() * 1;
+
+
+            drop.style.width =
+                size + "px";
+
+
+            drop.style.height =
+                (8 + Math.random() * 12) + "px";
+
+
+            drop.style.opacity =
+                0.15 + Math.random() * 0.35;
+
+
+            drop.style.animationDuration =
+                (3 + Math.random() * 4) + "s";
+
+
+            drop.style.animationDelay =
+                Math.random() * 6 + "s";
+
+
+            rain.appendChild(drop);
+
+        }
+
+    </script>
+
+
+    <!-- YOUR JAVASCRIPT -->
+    <script src="script.js"></script>
+
+</body>
+</html>
+```
